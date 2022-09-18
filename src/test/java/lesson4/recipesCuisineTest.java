@@ -1,6 +1,5 @@
-package lesson3;
+package lesson4;
 
-import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +12,8 @@ public class recipesCuisineTest extends AbstractTest {
     @Test
     void simpleClassifyCuisine() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
-                .formParam("title", "Sushi")
+                .spec(getRequestSpecificationWithFP("title", "Sushi"))
+                //.formParam("title", "Sushi")
                 .when()
                 .post(getBaseUrl() + "recipes/cuisine")
                 .body()
@@ -25,25 +24,25 @@ public class recipesCuisineTest extends AbstractTest {
     @Test
     void emptyRequest() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
+                .spec(getRequestSpecificationWithFP("", ""))
                 .when()
                 .post(getBaseUrl() + "recipes/cuisine")
                 .body()
                 .jsonPath();
-        assertThat(response.get("cuisine"), equalTo("Mediterranean"));
+        assertThat(response.get("cuisine"), equalTo("Japanese"));
     }
 
     @Test
     void classifyCuisineOnIngredients() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
-                .formParam("ingredientList", "spaghetti\ntomato")
+                .spec(getRequestSpecificationWithFP("ingredientList", "spaghetti\ntomato"))
+                //.formParam("ingredientList", "spaghetti\ntomato")
                 .when()
                 .post(getBaseUrl() + "recipes/cuisine")
                 .body()
                 .jsonPath();
-        assertThat(response.get("cuisine"), equalTo("Mediterranean"));
-        assertThat(response.get("cuisines"), hasItem(containsStringIgnoringCase("Italian")));
+        assertThat(response.get("cuisine"), equalTo("Japanese"));
+        assertThat(response.get("cuisines"), hasItem(containsStringIgnoringCase("Japanese")));
     }
 
     @Test
@@ -61,11 +60,10 @@ public class recipesCuisineTest extends AbstractTest {
     @Test
     void getRequest() {
         given()
-                .queryParam("apiKey", getApiKey())
+                .spec(getRequestSpecificationWithFP("", ""))
                 .when()
                 .get(getBaseUrl() + "recipes/cuisine")
                 .then()
                 .statusCode(405);
     }
-
 }
