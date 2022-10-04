@@ -1,6 +1,5 @@
-package lesson3;
+package lesson4;
 
-import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +12,8 @@ public class recipesComplexSearchTest extends AbstractTest {
     @Test
     void simpleSearchWithQuery() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
-                .queryParam("query", "rice")
+                .spec(getRequestSpecificationWithQP("query", "rice"))
+               // .queryParam("query", "rice")
                 .when()
                 .get(getBaseUrl() + "recipes/complexSearch")
                 .body()
@@ -26,8 +25,8 @@ public class recipesComplexSearchTest extends AbstractTest {
     @Test
     void searchWithSupportedCuisine() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
-                .queryParam("query", "pasta")
+                .spec(getRequestSpecificationWithQP("query", "pasta"))
+            //    .queryParam("query", "pasta")
                 .queryParam("cuisine", "Italian")
                 .when()
                 .get(getBaseUrl() + "recipes/complexSearch")
@@ -39,7 +38,7 @@ public class recipesComplexSearchTest extends AbstractTest {
     @Test
     void emptySearch() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
+                .spec(getRequestSpecificationWithQP("", ""))
                 .when()
                 .get(getBaseUrl() + "recipes/complexSearch")
                 .body()
@@ -51,8 +50,8 @@ public class recipesComplexSearchTest extends AbstractTest {
     @Test
     void searchWithUnsupportedCuisine() {
         JsonPath response = given()
-                .queryParam("apiKey", getApiKey())
-                .queryParam("cuisine", "Russian")
+                .spec(getRequestSpecificationWithQP("cuisine", "Russian"))
+                //.queryParam("cuisine", "Russian")
                 .when()
                 .get(getBaseUrl() + "recipes/complexSearch")
                 .body()
@@ -73,6 +72,4 @@ public class recipesComplexSearchTest extends AbstractTest {
         assertThat(response.get("code"), equalTo(401));
         assertThat(response.get("message"), containsStringIgnoringCase("You are not authorized"));
     }
-
-
 }
